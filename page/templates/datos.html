@@ -1,0 +1,75 @@
+{% extends "header.html" %}
+{% load staticfiles %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .google-maps {
+        position: relative;
+        padding-bottom: 25%; // This is the aspect ratio
+        height: 0;
+        overflow: hidden;
+    }
+    .google-maps iframe {
+        position: absolute;
+        top: 0;
+        left: 7%;
+        width: 86% !important;
+        height: 100% !important;
+    }
+</style>
+
+<div id="replace_here" class="content-section-b">
+	<div class="container">
+	<h3>Posición actual</h3>
+	<br>
+	<table id="tabla" class="table">
+		
+		<tr>
+			<th>Fecha</th>
+			<th>Hora</th>
+			<th>Longitud</th>
+			<th>Latitud</th>
+		</tr>
+		
+		<tbody>
+		
+		<tr>
+			<td hidden>{{s.id}}</td>
+	    	<td>{{s.date.date}}</td>
+	    	<td>{{s.date.time}}</td>
+	    	<td>{{s.longitude}}</td>
+	    	<td>{{s.latitude}}</td>
+		</tr>
+		
+		</tbody>
+	</table>
+	</div>
+
+	<div class="google-maps">
+	<iframe width="600" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=%2B{{s.longitude}}%2C%20{{s.latitude}}&key=AIzaSyAUJJkRdKROdliAKBSJ18UmwNk0XL3bb8M" allowfullscreen></iframe>
+	</div>
+</div>
+
+<script type="text/javascript">
+	setInterval(function() {
+	var tabla = document.getElementById("tabla");
+	var fila = tabla.rows[tabla.rows.length - 1];
+	var current_id = fila.cells[0].innerHTML;
+    $.ajax({
+        type: "GET",
+        url: {% url 'get_more_datos' %}/,
+        data: {'current_id':current_id}
+    })
+    .done(function(response) {
+    	if (response){
+        	$('#replace_here').replaceWith(response);
+    	}
+    });
+}, 10000)
+</script>
+
+{% endblock %}
+
+
