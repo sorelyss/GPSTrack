@@ -1,0 +1,20 @@
+>SRT;ALL<
+
+>SIDGrupo2<
+>SXAID0<
+
+#Configuración del APN
+>SRFAweb.vmc.net.co<
+#>SRFAweb.colombiamovil.com.co<
+#>SRFAinternet.movistar.com.co<
+
+# SERVER 1 (UDP 22900)
+>SXADP0402grp2srv1.hopto.org;22900<
+
+# SERVER 2 (UDP 9220)
+>SXADP0502grp2srv2.hopto.org;9220<
+
+>SDA1;P04,P05,P15<
+
+>STD10020<
+>SED03NV1;TD1+;ACT=QPV<
