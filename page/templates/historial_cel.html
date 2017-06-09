@@ -1,0 +1,190 @@
+{% extends "header.html" %}
+{% load staticfiles %}
+{% load static %}
+
+{% block content %}
+<!-- Include Required Prerequisites -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+ 
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="{% static 'js/calendario.js' %}"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.min.css" />
+
+{% csrf_token %}
+<style>
+    #map {
+        position: relative;
+        padding-bottom: 40%;
+        height: 50%;
+        overflow: hidden;
+    }
+    #info-box {
+        background-color: white;
+        border: 1px solid black;
+        bottom: 200px;
+        height: 40px;
+        padding: 10px;
+        margin: 1% 1%;
+        position: absolute;
+        left: 30px;
+    }
+    .slider-selection {
+      background: #BABABA;
+    }
+</style>
+
+<div class="content-section-a" style="background-color: white">
+  <div class="container">
+    <h3>Historial de posiciones</h3>
+    <br>
+    <div class="row">
+      <div class="col-sm-5">
+        <div class="input-group">
+          <span class="input-group-addon"> Seleccione Fecha y Hora:</span>
+          <input class="form-control" type="text" id="calendario">
+          <span class="input-group-addon" data-toggle="tooltip"  title="Click en la casilla blanca para seleccionar fechas" data-placement="bottom"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="input-group">
+          <span class="input-group-addon">Desplace la posición del indicador:</span>&nbsp;&nbsp;&nbsp;
+          <input id="points" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="{{syrus_data|length}}" data-slider-step="1" data-slider-value="1"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="map"></div>
+<div id="info-box"></div>
+
+<script type="text/javascript" src="{% static 'js/historial.js' %}"></script>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+
+var poly;
+var Smarker;var Emarker;
+var marker;
+var map;
+var coordenadas = [];
+var fechas = [];
+var puntos_Slider = $('#points').slider()
+var bounds;
+function initMap() {
+  //var coordenadas = []; //[{lat: 37.772, lng: -122.214}];
+  {% for s in syrus_data %}
+  coordenadas.push({lat: {{s.latitude}}, lng: {{s.longitude}}});
+  fechas.push("{{s.date}}");
+  {% endfor %}
+  //if (coordenadas.length==0) {alert("coordenadas vacias");coordenadas = [{lat: 11.019632, lng: -74.851054}];}
+  var numDatos = Object.keys(coordenadas).length;
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 20,
+    center: {lat: 11.019632, lng: -74.851054},
+    zoomControl: true,
+    zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_CENTER
+    },
+    scaleControl: true,
+    streetViewControl: false,
+  });
+  trazarRecorrido(coordenadas,fechas);
+}
+
+function trazarRecorrido(coordenades, dates) {
+  fechas = dates;
+  coordenadas = coordenades;
+  var numDatos = Object.keys(coordenadas).length;
+  if (numDatos!=0){    
+    poly = new google.maps.Polyline({
+      path: coordenades,
+      geodesic: true,
+      strokeColor: '#993333',
+      strokeOpacity: 1.0,   
+      strokeWeight: 2
+    });
+    var index_centro = parseInt(numDatos/2);
+    if (coordenadas.length>1) {
+      Emarker = new google.maps.Marker({
+        position: coordenades[numDatos-1],
+        map: map,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+      });
+      Smarker = new google.maps.Marker({
+        position: coordenades[0],
+        map: map,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+      });
+    }
+      marker = new google.maps.Marker({
+      position: coordenadas[0],
+      map: map,
+      icon: '{% static 'img/truck.png' %}'
+    });
+    poly.setMap(map);
+    bounds = new google.maps.LatLngBounds();
+    coordenades.forEach(function(e){bounds.extend(e);})         
+    map.fitBounds(bounds);
+
+    /*document.getElementById("points").max = numDatos;
+    document.getElementById("points").value = 1;*/
+    puntos_Slider.slider({max: numDatos})
+    puntos_Slider.slider('setValue',1)
+  }
+  else {
+    map.setOptions({
+    maxZoom: 18,
+    minZoom: 10
+    });
+  }
+  runPuntos();
+}
+
+function run(start_date, end_date) {
+    $.ajax({
+        type: "GET",
+        url: {% url 'fechas_cel' %}/,
+        data: {'start_date':start_date, 'end_date':end_date}
+    })
+    .done(function(response) {
+      if (response['puntos'].length =! 0){
+          //$('#reloadmapa').replaceWith(response);
+          poly.setMap(null);
+          marker.setMap(null); Smarker.setMap(null); Emarker.setMap(null);
+          trazarRecorrido(eval(response['puntos']),eval(response['date']));
+      }
+    });
+}
+
+$("#points").on("slide", function(slideEvt) {
+runPuntos();
+});
+
+function runPuntos(){
+  marker.setMap(null);
+  var punto = document.getElementById("points").value;
+  if(Object.keys(coordenadas).length==0){document.getElementById('info-box').textContent = "No hay coordenadas para este rango de fechas";}
+  else {document.getElementById('info-box').textContent = "Fecha: " + fechas[punto-1];}
+  marker = new google.maps.Marker({
+  position: coordenadas[punto-1],
+  map: map,
+  icon: '{% static 'img/truck.png' %}',
+  });
+  puntos_Slider.slider({
+  formatter: function(value) {
+    return "Fecha: " + fechas[value-1];
+  }
+  });
+}
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCf8jZcZuQrOVqDTov37awP6tPLUHw_NAU&callback=initMap"></script>
+
+{% endblock %}

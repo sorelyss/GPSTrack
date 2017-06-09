@@ -1,0 +1,117 @@
+{% extends "header.html" %}
+{% load staticfiles %}
+{% load static %}
+
+{% block content %}
+{% csrf_token %}
+<style>
+    #map {
+	width:80%;
+	height:75%;
+	margin-left:auto; 
+	margin-right: auto;
+	float: none;
+	}
+</style>
+
+<div class="content-section-a" style="background-color: white;">
+	<div class="container">
+	<h3>Historial por área</h3>
+	</div>	
+</div>
+	<div id="map"></div>
+
+<script>
+var poly;
+var Smarker;var Emarker;
+var marker;
+var map;
+var coordenadas = [];
+function initMap() {
+  //var coordenadas = []; //[{lat: 37.772, lng: -122.214}];
+  {% for s in syrus_data %}
+	coordenadas.push({lat: {{s.latitude}}, lng: {{s.longitude}}});
+  {% endfor %}
+
+  var numDatos = Object.keys(coordenadas).length;
+  var index_centro = parseInt(numDatos/2);
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 10,
+    center: coordenadas[index_centro],
+    zoomControl: true,
+    zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_CENTER
+    },
+    scaleControl: true,
+    streetViewControl: false,
+  });
+
+  var drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.RECTANGLE
+      ]
+    }
+  });
+  drawingManager.setMap(map);
+  google.maps.event.addListener(drawingManager, 'rectanglecomplete', function(rectangle) {
+  var radius = rectangle.getBounds();
+  console.log(radius.f.b); //latitud menor
+  console.log(radius.f.f); //latitud mayor
+  console.log(radius.b.b);
+  console.log(radius.b.f); //lng mayor
+  run(radius.f.b,radius.f.f,radius.b.b,radius.b.f)
+});
+}
+
+function puntos(){
+  marker.setMap(null);
+  var punto = document.getElementById("points").value;
+  marker = new google.maps.Marker({
+    position: coordenadas[punto-1],
+    map: map,
+    icon: '{% static 'img/truck.png' %}'
+  });
+}
+
+
+
+function run(lat1,lat2,lng1,lng2) {
+  	$.ajax({
+        type: "GET",
+        url: {% url 'area' %}/,
+        data: {'start_lat':lat2, 'end_lat':lat1, 'start_lng':lng2, 'end_lng':lng1}
+    })
+    .done(function(response) {
+    	if (response){
+        	//$('#reloadmapa').replaceWith(response);
+        	//trazarRecorrido(eval(response));
+          console.log(response)
+          for (var i = response['puntos'].length - 1; i >= 0; i--) {
+            marker = new google.maps.Marker({
+              position: eval(response['puntos'])[i],
+              map: map,
+	      title: "Fecha: " + response['fechas'][i],
+              icon: '{% static 'img/pin.png' %}'
+            });
+          }
+
+    	}
+    });
+}
+
+ var contentString = '<p>Holiii</p>';
+ var infowindow;
+
+
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCf8jZcZuQrOVqDTov37awP6tPLUHw_NAU&callback=initMap&libraries=drawing"></script>
+
+
+
+{% endblock %}

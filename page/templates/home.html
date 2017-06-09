@@ -5,25 +5,22 @@
 {% block content %}
 
     <!-- Header -->
-    <a name="about"></a>
+    
     <div class="intro-header">
         <div class="container">
 
             <div class="row">
                 <div class="col-lg-12">
                     <div class="intro-message">
-                        <h1>El camión del Tio</h1>
-                        <h3>Geolocalización en vivo de sus camiones</h3>
                         <hr class="intro-divider">
+                            <h1>El Bote del Tío</h1>
+                            <h3>Visualización Batimétrica en vivo</h3>
                         <ul class="list-inline intro-social-buttons">
-                            <li>
+                            <!---<li>
                                 <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
-                            </li>
+                            </li>--->
                             <li>
-                                <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                            </li>
-                            <li>
-                                <a href="#" class="btn btn-default btn-lg"><i class="fa fa-linkedin fa-fw"></i> <span class="network-name">Linkedin</span></a>
+                                <a href="https://github.com/RaptrX/GPStracker_site" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
                             </li>
                         </ul>
                     </div>
@@ -38,44 +35,79 @@
 
     <!-- Page Content -->
 
-    <a  name="services"></a>
-    <div class="content-section-a">
 
+    <a  name="services"></a>
+                          
+    <div class="content-section-a" align="center">
+            <h2>TUTORIAL</h2>
+             <h4>Vea una simple muestra de como utilizar nuestros servicios abajo</h4><br><br>
         <div class="container">
             <div class="row">
                 <div class="col-lg-5 col-sm-6">
                     <hr class="section-heading-spacer">
                     <div class="clearfix"></div>
-                    <h2 class="section-heading">Death to the Stock Photo:<br>Special Thanks</h2>
-                    <p class="lead">A special thanks to <a target="_blank" href="http://join.deathtothestockphoto.com/">Death to the Stock Photo</a> for providing the photographs that you see in this template. Visit their website to become a member.</p>
+                    <h2 class="section-heading">Acceda a la ubicación y profundidad de su Bote en tiempo real</h2>
+                    <p class="lead">1. Al hacer click en la pestaña "Tiempo Real" podrá ver en tiempo real la ubicacion y profundidad en ese punto.</p>
                 </div>
                 <div class="col-lg-5 col-lg-offset-2 col-sm-6">
-                    <img class="img-responsive" src="{% static 'img/ipad.png' %}" alt="">
+            
+                    <img class="img-responsive" src="{% static 'img/dondeest.gif' %}" alt="">
                 </div>
-            </div>
-
+             </div>
         </div>
-        <!-- /.container -->
-
     </div>
-    <!-- /.content-section-a -->
 
     <div class="content-section-b">
-
         <div class="container">
-
             <div class="row">
                 <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
                     <hr class="section-heading-spacer">
                     <div class="clearfix"></div>
-                    <h2 class="section-heading">3D Device Mockups<br>by PSDCovers</h2>
-                    <p class="lead">Turn your 2D designs into high quality, 3D product shots in seconds using free Photoshop actions by <a target="_blank" href="http://www.psdcovers.com/">PSDCovers</a>! Visit their website to download some of their awesome, free photoshop actions!</p>
+                    <h2 class="section-heading"> Historial de recorridos del vehículo<br></h2>
+                    <p class="lead">1. Al hacer click en la pestaña de "Históricos" podrá acceder al historial de posiciones y profundidades.</p>
                 </div>
                 <div class="col-lg-5 col-sm-pull-6  col-sm-6">
-                    <img class="img-responsive" src="{% static 'img/dog.png' %}" alt="">
+                    <img class="img-responsive" src="{% static 'img/dondeha.gif' %}" alt="">
                 </div>
             </div>
+        </div>
 
+        <div class="container">
+             <div class="row">
+                  <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <p class="lead">2. Para seleccionar el rango de fechas entre las que desea visualizar los recorridos solo debe dar click en las fechas para modificarlas en el calendario desplegable.</p>
+                </div>
+                <div class="col-lg-5 col-sm-pull-6  col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/fecha.gif' %}" alt="">
+                </div>
+              </div>
+        </div>
+
+        <div class="container">
+             <div class="row">
+                  <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <p class="lead">3. Una vez escogida la fecha, con el slider que esta abajo de esta puede mover el indicador del vehículo en el trayecto para saber en que momento específico se registró cada posición y profundidad.</p>
+                </div>
+                <div class="col-lg-5 col-sm-pull-6  col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/slider.gif' %}" alt="">
+                </div>
+              </div>
+        </div>
+          <div class="container">
+             <div class="row">
+                  <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <p class="lead">4. Debajo del mapa se encuentra un plano 2D con profundidad vs tiempo.</p>
+                </div>
+                <div class="col-lg-5 col-sm-pull-6  col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/pvt.gif' %}" alt="">
+                </div>
+              </div>
         </div>
         <!-- /.container -->
 
@@ -90,39 +122,77 @@
                 <div class="col-lg-5 col-sm-6">
                     <hr class="section-heading-spacer">
                     <div class="clearfix"></div>
-                    <h2 class="section-heading">Google Web Fonts and<br>Font Awesome Icons</h2>
-                    <p class="lead">This template features the 'Lato' font, part of the <a target="_blank" href="http://www.google.com/fonts">Google Web Font library</a>, as well as <a target="_blank" href="http://fontawesome.io">icons from Font Awesome</a>.</p>
+                    <h2 class="section-heading">¿Desea ver la representación 3D?<br></h2>
+                    <p class="lead">La pestaña de "Histórico 3D" le permite justo eso. </p>
                 </div>
                 <div class="col-lg-5 col-lg-offset-2 col-sm-6">
-                    <img class="img-responsive" src="{% static 'img/phones.png' %}" alt="">
+                    <img class="img-responsive" src="{% static 'img/estazona.gif' %}" alt="">
                 </div>
             </div>
 
         </div>
-        <!-- /.container -->
-
-    </div>
-    <!-- /.content-section-a -->
-
-    <a  name="contact"></a>
-    <div class="banner">
 
         <div class="container">
+             <div class="row">
+                  <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <p class="lead">2. Solo debe con el rectangulo demarcar el espacio deseado.</p>
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/rectangulo.gif' %}" alt="">
+                </div>
+              </div>
+        </div>
 
+        <div class="container">
+             <div class="row">
+                  <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <p class="lead">3. Los indicadores le proporcionaran algo de información extra para que sepa en que momento se registró cada posicíon en la zona.</p>
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/indicador.gif' %}" alt="">
+                </div>
+              </div>
+        </div>
+
+    </div>
+
+    <a name="about"></a>
+    <div class="content-section-a">
+
+        <div class="container">
             <div class="row">
-                <div class="col-lg-6">
-                    <h2>Connect to Start Bootstrap:</h2>
+                <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Contacto</h2>
+                    <p class="lead">Para contactarnos escribir a alguno de los siguientes correos:<br>
+                        Catherine Diaz - dcatherine@uninorte.edu.co<br>
+                        Daniela Rada - destarita@uninorte.edu.co<br>
+                        Giorgio Russo - grusso@uninorte.edu.co<br>
+                        Sorelys Sandoval - sorelyss@uninorte.edu.co</p>
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive" src="{% static 'img/titi.jpg' %}" alt="">
+                </div>      
+             </div>
+         </div>
+    </div>
+
+    <a  name="contact"></a>
+    <div class="banner" style="background-image: {% static 'img/botedeltio.jpg' %}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6"  >
+                    <h3>Haga click para saber más de nuestro servicio:</h3>
                 </div>
                 <div class="col-lg-6">
-                    <ul class="list-inline banner-social-buttons">
+                    <ul class="list-inline banner-social-buttons" >
                         <li>
-                            <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                        </li>
-                        <li>
-                            <a href="#" class="btn btn-default btn-lg"><i class="fa fa-linkedin fa-fw"></i> <span class="network-name">Linkedin</span></a>
+                            <a href="https://github.com/RaptrX/GPStracker_site" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
                         </li>
                     </ul>
                 </div>

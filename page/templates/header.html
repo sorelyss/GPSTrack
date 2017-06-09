@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-	{% load staticfiles %}
-	{% load static %}
+    {% load staticfiles %}
+    {% load static %}
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,8 +11,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-	<title>El Camión del Tío</title>
-	<link rel="icon" href="{% static 'img/srs_logo.png' %}"">
+    <title>El Bote del Tío</title>
+    <link rel="icon" href="{% static 'img/botedeltio.jpg' %}"">
 
     <!-- Bootstrap Core CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
@@ -37,20 +37,26 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand topnav" href="{% url 'home'%}#">El Camión del Tío</a>
+                <a class="navbar-brand topnav" href="{% url 'home'%}#">El Bote del Tío</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="{% url 'datos' %}">¿Donde está mi carro?</a>
+                        <a href="{% url 'real_time' %}">Tiempo Real</a>
                     </li>
                     <li>
-                        <a href="{% url 'home' %}#about">Nosotros</a>
+                        <a href="{% url 'historial' %}">Históricos</a>
+                    </li> 
+                    <li>
+                        <a href="{% url 'elevacion' %}">Históricos 3D</a>
                     </li>
+                    <!---<li>
+                        <a href="{% url 'home' %}#about">Nosotros</a>
+                    </li>--->
 
                     <li>
-                        <a href="{% url 'home' %}#services">Servicios</a>
+                        <a href="{% url 'home' %}#services">Tutorial</a>
                     </li>
                     <li>
                         <a href="{% url 'home' %}#contact">Contacto</a>
@@ -71,23 +77,30 @@
             <div class="row">
                 <div class="col-lg-12">
                     <ul class="list-inline">
+                        <!--<li>
+                            <a href="{% url 'real_time' %}">Tiempo Real</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li> 
                         <li>
-                            <a href="#">Home</a>
+                        <a href="{% url 'historial' %}">Históricos</a>
+                        </li>
+                        <li>
+                        <a href="{% url 'elevacion' %}">Históricos 3D</a>
                         </li>
                         <li class="footer-menu-divider">&sdot;</li>
                         <li>
-                            <a href="{% url 'home' %}#about">About</a>
+                            <a href="{% url 'home' %}#about">Nosotros</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>  -->
+                            <a href="{% url 'home' %}#services">Tutorial</a>
                         </li>
                         <li class="footer-menu-divider">&sdot;</li>
                         <li>
-                            <a href="{% url 'home' %}#services">Services</a>
-                        </li>
-                        <li class="footer-menu-divider">&sdot;</li>
-                        <li>
-                            <a href="{% url 'home' %}#contact">Contact</a>
+                            <a href="{% url 'home' %}#contact">Contacto</a>
                         </li>
                     </ul>
-                    <p class="copyright text-muted small">Copyright &copy; GRP2 2017. All Rights Reserved</p>
+                    <p class="copyright text-muted small"> Copyright &copy; El Bote del Tío 2017. Todos los derechos reservados</p>
                 </div>
             </div>
         </div>

@@ -1,0 +1,244 @@
+{% extends "header.html" %}
+{% load staticfiles %}
+{% load static %}
+
+{% block content %}
+<!-- Include Required Prerequisites -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+ 
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="{% static 'js/calendario.js' %}"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.min.css" />
+
+{% csrf_token %}
+<style>
+     #map {
+	width:80%;
+	height:75%;
+	margin-left:auto; 
+	margin-right: auto;
+	float: none;
+	}
+    #info-box {
+        background-color: white;
+        border: 1px solid black;
+        bottom: 200px;
+        height: 40px;
+        padding: 10px;
+        margin: 8% 13%;
+        position: absolute;
+        left: 30px;
+    }
+    .slider-selection {
+      background: #BABABA;
+    }
+</style>
+
+<div class="content-section-a">
+	<div class="container">
+	<h3>Historial de posiciones</h3>
+	
+	{% comment %}
+	{{syrus_data.first.date|date:"Y-m-d H:i:s"}}
+	{{#syrus_data.first.date|date:'c'#}}
+	{#2017-03-01T23:30:18#}
+	{% endcomment %}
+
+	<br>
+<!--   <script> console.log("holi" + "{{syrus_data|first|date }}")</script>
+	<input type="date" id="start_date" value="{{syrus_data.first.date|date:'Y-m-d'}}">
+	<input type="time" id="start_time" value="{{syrus_data.first.date|date:'H:i:s'}}"> 
+	<br><label>Fecha final: </label>
+	<input type="date" id="end_date" value="{{syrus_data.last.date|date:'Y-m-d'}}">
+	<input type="time" id="end_time" value="{{syrus_data.last.date|date:'H:i:s'}}"> --> 
+  <div class="input-group" style="width: 35%; position: relative;">
+    <span class="input-group-addon">Rango de fechas</span>
+    <input class="form-control" type="text" id="calendario">
+    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+  </div>
+
+  <input id="points" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="{{syrus_data|length}}" data-slider-step="1" data-slider-value="1"/>
+  
+  <!-- <br><input type="range" id="points" min="1" max="{{syrus_data|length}}" step="1"> -->
+</div>
+
+
+<div id="map"></div>
+<div id="info-box">TESTING</div>
+
+<script type="text/javascript" src="{% static 'js/historial.js' %}"></script>
+
+<script>
+var poly;
+var Smarker;var Emarker;
+var marker;
+var map;
+var coordenadas = [];
+var fechas = [];
+var puntos_Slider = $('#points').slider()
+var drawingManager;
+function initMap() {
+  //var coordenadas = []; //[{lat: 37.772, lng: -122.214}];
+  {% for s in syrus_data %}
+  coordenadas.push({lat: {{s.latitude}}, lng: {{s.longitude}}});
+  fechas.push("{{s.date}}");
+  {% endfor %}
+  if (coordenadas.length==0) {coordenadas = [{lat: 11.019632, lng: -74.851054}];}
+  var numDatos = Object.keys(coordenadas).length;
+  var index_centro = parseInt(numDatos/2);
+
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 18,
+    center: coordenadas[index_centro],
+    zoomControl: true,
+    zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_CENTER
+    },
+    scaleControl: true,
+    streetViewControl: false,
+  });
+
+  drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.TOP_CENTER,
+      drawingModes: [
+        google.maps.drawing.OverlayType.RECTANGLE
+      ]
+    }
+  });
+
+  drawingManager.setMap(map);
+  google.maps.event.addListener(drawingManager, 'rectanglecomplete', function(rectangle) {
+  var radius = rectangle.getBounds();
+  console.log(radius.f.b); //latitud menor
+  console.log(radius.f.f); //latitud mayor
+  console.log(radius.b.b);
+  console.log(radius.b.f); //lng mayor
+  runArea(radius.f.b,radius.f.f,radius.b.b,radius.b.f);
+
+  /* ESTO ES INTENTANDO EL CIRCULO
+  for (var i = coordenadas.length - 1; i >= 0; i--) {
+      console.log(coordenadas[i])
+      var myLatLng = new google.maps.LatLng(coordenadas[i]);
+      console.log(myLatLng)
+      if (google.maps.geometry.poly.containsLocation(myLatLng, circle)) {
+      var marker_circle = new google.maps.Marker({
+      position: coordenadas[i],
+      map: map,
+      icon: '{% static 'img/truck.png' %}'
+    });
+      }
+  }*/
+
+  
+  });
+  trazarRecorrido(coordenadas,fechas);
+}
+
+function trazarRecorrido(coordenades, dates) {
+  coordenadas = coordenades;
+  fechas = dates;
+  if (coordenadas.length==0) {coordenadas = [{lat: 11.019632, lng: -74.851054}];}
+  console.log(coordenades)
+  poly = new google.maps.Polyline({
+    path: coordenades,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,   
+    strokeWeight: 2
+  });
+  var numDatos = Object.keys(coordenades).length;
+  var index_centro = parseInt(numDatos/2);
+
+  Emarker = new google.maps.Marker({
+    position: coordenades[numDatos-1],
+    map: map,
+    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+  });
+  Smarker = new google.maps.Marker({
+    position: coordenades[0],
+    map: map,
+    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+  });
+    marker = new google.maps.Marker({
+    position: coordenadas[0],
+    map: map,
+    icon: '{% static 'img/truck.png' %}'
+  });
+  //map.setCenter = coordenades[index_centro];
+  poly.setMap(map);
+  /*document.getElementById("points").max = numDatos;
+  document.getElementById("points").value = 1;*/
+  puntos_Slider.slider({max: numDatos})
+  puntos_Slider.slider('setValue',1)
+}
+
+function run(start_date, end_date) {
+  //var start_date = $('#start_date').val() + " " + $('#start_time').val(); // get the current value of the input field.
+  //var end_date = $('#end_date').val() + " " +  $('#end_time').val();
+    $.ajax({
+        type: "GET",
+        url: {% url 'fechas' %}/,
+        data: {'start_date':start_date, 'end_date':end_date}
+    })
+    .done(function(response) {
+      if (response['puntos'].length =! 0){
+          //$('#reloadmapa').replaceWith(response);
+          poly.setMap(null);
+          marker.setMap(null); Smarker.setMap(null); Emarker.setMap(null);
+          trazarRecorrido(eval(response['puntos']),eval(response['date']));
+      }
+    });
+}
+
+function runArea(lat1,lat2,lng1,lng2) {
+    $.ajax({
+        type: "GET",
+        url: {% url 'area' %}/,
+        data: {'start_lat':lat2, 'end_lat':lat1, 'start_lng':lng2, 'end_lng':lng1}
+    })
+    .done(function(response) {
+      if (response){
+          //$('#reloadmapa').replaceWith(response);
+          //trazarRecorrido(eval(response));
+          console.log(response)
+          for (var i = response['puntos'].length - 1; i >= 0; i--) {
+            marker = new google.maps.Marker({
+              position: eval(response['puntos'])[i],
+              map: map,
+              icon: '{% static 'img/truck.png' %}'
+            });
+          }
+
+      }
+    });
+}
+
+$("#points").on("slide", function(slideEvt) {
+    marker.setMap(null);
+    var punto = document.getElementById("points").value;
+    document.getElementById('info-box').textContent = "Fecha: " + fechas[punto-1];
+    marker = new google.maps.Marker({
+    position: coordenadas[punto-1],
+    map: map,
+    icon: '{% static 'img/truck.png' %}',
+  });
+  puntos_Slider.slider({
+  formatter: function(value) {
+    return 'Fecha: ' + fechas[value-1];
+  }
+  });
+});
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCf8jZcZuQrOVqDTov37awP6tPLUHw_NAU&callback=initMap&libraries=drawing"></script>
+
+
+
+{% endblock %}

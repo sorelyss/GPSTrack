@@ -1,0 +1,120 @@
+{% extends "header.html" %}
+{% load staticfiles %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .google-maps {
+        position: relative;
+        padding-bottom: 25%; // This is the aspect ratio
+        height: 0;
+        overflow: hidden;
+    }
+    .google-maps iframe {
+        position: absolute;
+        top: 0;
+        left: 7%;
+        width: 86% !important;
+        height: 100% !important;
+    }
+    #map {
+        height: 100%;
+    }
+
+</style>
+
+<div class="content-section-b">
+	<div class="container">
+	<h3>Última Posición Registrada</h3>
+	<br>
+	{{ var }}
+	<table id="tabla" class="table">
+		
+		<tr>
+			<th>Fecha</th>
+			<th>Hora</th>
+			<th>Longitud</th>
+			<th>Latitud</th>
+		</tr>
+		
+		<tbody>
+		
+		<tr>
+			<td hidden>{{s.id}}</td>
+	    	<td>{{s.date.date}}</td>
+	    	<td>{{s.date.time}}</td>
+	    	<td>{{s.longitude}}</td>
+	    	<td>{{s.latitude}}</td>
+		</tr>
+		
+		</tbody>
+	</table>
+	</div>
+
+</div>
+
+<div id="map"></div>
+	    
+    <script>
+    var map;
+    var poly;
+      function initMap() {
+		var coordenadas = []; //[{lat: 37.772, lng: -122.214}];
+			coordenadas.push({lat: {{s.latitude}}, lng: {{s.longitude}}});
+        // Create a map object and specify the DOM element for display.
+        map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 18,
+			center: coordenadas[0],
+			zoomControl: true,
+			zoomControlOptions: {
+			    position: google.maps.ControlPosition.LEFT_CENTER
+			},
+			scaleControl: true,
+			streetViewControl: false,
+        });
+        //trazarRecorrido(coordenadas);
+        var coordenades = coordenadas;
+        		if (coordenades == undefined) {coordenades = [{lat: 37.772, lng: -122.214}];}
+		poly = new google.maps.Polyline({
+			path: coordenades,
+			geodesic: true,
+			strokeColor: '#FF0000',
+			strokeOpacity: 1.0, 	
+			strokeWeight: 2
+		});
+
+		marker = new google.maps.Marker({
+			position: coordenades[0],
+			map: map
+		});
+		console.log(coordenades)
+		//map.setCenter = coordenades[0];
+		poly.setMap(map);
+      }
+	  function trazarRecorrido(coordenades) {
+		if (coordenades == undefined) {coordenades = [{lat: 37.772, lng: -122.214}];}
+		poly = new google.maps.Polyline({
+			path: coordenades,
+			geodesic: true,
+			strokeColor: '#FF0000',
+			strokeOpacity: 1.0, 	
+			strokeWeight: 2
+		});
+
+		marker = new google.maps.Marker({
+			position: coordenades[0],
+			map: map
+		});
+		console.log(coordenades)
+		map.setCenter = coordenades[0];
+		poly.setMap(map);
+		}
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCf8jZcZuQrOVqDTov37awP6tPLUHw_NAU&callback=initMap"></script>
+
+
+{% endblock %}
+
+

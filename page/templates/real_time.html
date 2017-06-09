@@ -1,0 +1,144 @@
+{% extends "header.html" %}
+{% load staticfiles %}
+{% load static %}
+
+{% block content %}
+<style>
+    #info-box {
+        background-color: white;
+        border: 1px solid black;
+        bottom: 300px;
+        height: 60px;
+        padding: 5px;
+        margin: 8% 13%;
+        position: absolute;
+        left: 30px;
+    }
+    #map {
+        position: relative;
+        padding-bottom: 25%; // This is the aspect ratio
+        height: 0;
+        overflow: hidden;
+    }
+</style>
+
+<div class="content-section-b">
+	<div class="container">
+	<h3>Última Posición y Profundidad Registradas</h3>
+	<br>
+</div>
+
+<div id="map"></div>
+<div id="info-box"></div>
+<div id="elevation_chart"></div>
+
+<script src="https://www.google.com/jsapi"></script>
+<script>
+google.load("visualization", "1", {packages: ["corechart"]});
+var poly;
+var marker;
+var map;
+var coordenadas = [];
+var fecha = '{{s.date|date:'H:i:s'}}';
+var altura;
+var chart;
+var data;
+function initMap() {
+  data = new google.visualization.DataTable();
+  data.addColumn('string', 'Fecha');
+  data.addColumn('number', 'Altura');
+  //var coordenadas = []; //[{lat: 37.772, lng: -122.214}];
+  coordenadas.push({lat: {{s.latitude}}, lng: {{s.longitude}}});
+  altura = {{s.elevation}};
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 18,
+    center: coordenadas[0],
+    zoomControl: true,
+    zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_CENTER
+    },
+    scaleControl: true,
+    streetViewControl: false,
+  });
+  plotElevation(altura); 
+  trazarRecorrido(coordenadas);
+}
+function trazarRecorrido(coordenades) {
+	if (coordenades == undefined) {coordenades = [{lat: 37.772, lng: -122.214}];console.log("trazarRecorrido(coordenades) coordenades undefined")}
+	console.log("que pasa?")
+    poly = new google.maps.Polyline({
+    path: coordenades,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0, 	
+    strokeWeight: 2
+  });
+  var numDatos = Object.keys(coordenades).length;
+  var index_centro = parseInt(numDatos/2);
+  console.log("que pasa 2?")
+  marker = new google.maps.Marker({
+    position: coordenades[numDatos-1],
+    title: 'Hora: ' + fecha,
+    map: map
+  });
+  //map.setCenter = coordenades[index_centro];
+  poly.setMap(map);
+  document.getElementById('info-box').innerHTML = "Fecha: " + fecha + "<br>Altura: " + altura;
+  chart.setSelection([{row:numDatos-1, column:1}]);
+  console.log("que pasa3?")
+}
+function plotElevation(elevations) {
+  altura = elevations;
+  var chartDiv = document.getElementById('elevation_chart');
+  chart = new google.visualization.ColumnChart(chartDiv);
+	
+  data.addRow([fecha, Number(elevations)]);
+  /*for (var i = 0; i < elevations.length; i++) {
+    data.addRow([fecha[i], Number(elevations[i])]);
+  }*/
+  // Draw the chart using the data within its DIV.
+  chart.draw(data, {
+    height: 200,
+    legend: 'none',
+    titleY: 'Altura (m)',
+    tooltip: { trigger: 'selection' },
+    hAxis: {
+      baselineColor: 'none',
+      ticks: []
+    }
+  });
+}
+var current_id = {{ s.id }};
+setInterval(function() {
+    $.ajax({
+        type: "GET",
+        url: {% url 'update' %}/,
+        data: {'current_id':current_id}
+    })
+    .done(function(response) {
+    	//console.log(typeof(response))
+    	console.log(response)
+    	if (response == "no"){}
+    	else{
+    		//run();
+    		//puntos();
+        	//$('#replace_here').replaceWith(response);
+        	console.log("nuevo punto")
+        	//console.log((response['puntos']).split(/['']/));
+        	poly.setMap(null);
+        	marker.setMap(null);
+        	coordenadas.push(eval(response['puntos']));
+    			current_id = response['id'];
+    			fecha = response['date'];
+          altura = response['elevation'];    			
+          plotElevation(altura); 
+          trazarRecorrido(coordenadas);
+    	}
+    });
+}, 5000)
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCf8jZcZuQrOVqDTov37awP6tPLUHw_NAU&callback=initMap"></script>
+
+
+{% endblock %}
