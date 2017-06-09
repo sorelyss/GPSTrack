@@ -25,7 +25,7 @@ SECRET_KEY = '6o%yntrjz=s)85dhn)psi=2ss$#0ri*e7pfiv*36wkij+&6y@^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '192.168.0.4', '186.83.36.12']
+ALLOWED_HOSTS = ['localhost', '172.31.4.230', 'gpstracker.ddns.net']
 
 
 # Application definition
@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'page.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'design',
-        'USER': 'root',
-        'PASSWORD': 'control1234',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'NAME': 'GPSdata',
+        'USER': 'admin',
+        'PASSWORD': 'disenoelecDB',
+        'HOST': 'maindb.cm3aweycpb2u.us-west-1.rds.amazonaws.com',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
 }
